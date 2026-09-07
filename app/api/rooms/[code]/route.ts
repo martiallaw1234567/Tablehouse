@@ -32,6 +32,7 @@ export async function POST(request: Request, context: RouteContext) {
       color?: "black" | "white";
       position?: number;
       message?: string;
+      melds?: unknown[];
     };
     if (!payload.action || !payload.token) {
       return Response.json({ error: "게임 동작과 플레이어 토큰이 필요합니다." }, { status: 400 });

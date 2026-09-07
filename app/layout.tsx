@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Da Vinci Code Multiplayer",
-  description: "A private multiplayer deduction table for cracking the code.",
+  title: "TABLEHOUSE · 친구들과 한 판",
+  description: "다빈치코드, 로보77, 루미큐브, 수박게임, 달무티. 게임을 고르고 친구들과 같은 테이블에 모이세요.",
   other: {
     "codex-preview": "development",
   },
