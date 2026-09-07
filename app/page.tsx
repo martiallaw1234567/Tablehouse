@@ -235,14 +235,6 @@ function gameName(gameType: GameType) {
   return "DA VINCI CODE";
 }
 
-function gameDescription(gameType: GameType) {
-  if (gameType === "dalmuti") return "카드를 가장 빨리 비워 계급을 올라가세요. 세금, 혁명, 광대가 매 판의 질서를 바꿉니다.";
-  if (gameType === "watermelon") return "같은 과일을 합쳐 수박을 만들고, 상자 밖으로 넘치지 않게 최고 점수에 도전하세요.";
-  if (gameType === "robo77") return "카드를 내며 합계를 올리고, 77과 같은 숫자를 피하세요.";
-  if (gameType === "rummikub") return "같은 숫자 그룹과 색깔 연속을 조합해 손패를 먼저 비우세요.";
-  return "색은 보이고 숫자는 숨겨진 타일을 추리해 코드를 완성하세요.";
-}
-
 function ChatBubble({ chat }: { chat: ChatMessage }) {
   return (
     <div className="chat-bubble" role="status" aria-label={`${chat.playerName}님의 새 채팅`}>
@@ -1313,8 +1305,8 @@ export default function Home() {
 
           <aside className="control-rail">
             <div className="rail-section turn-section">
-              <span className="eyebrow">YOUR MOVE</span>
-              <div className="turn-title-row"><h2>{game.status === "finished" ? "Game over" : game.status === "drawing" ? "Initial draw" : game.status === "placing" ? "Joker setup" : isMyTurn ? "Your turn" : "Watch the table"}</h2><span className={`turn-orb ${isMyTurn ? "turn-orb-active" : ""}`} /></div>
+              <span className="eyebrow">테이블 상황</span>
+              <div className="turn-title-row"><h2>{game.status === "finished" ? "게임 종료" : game.status === "drawing" ? "시작 패 뽑기" : game.status === "placing" ? "조커 배치" : isMyTurn ? "내 차례예요" : "상대가 생각 중이에요"}</h2><span className={`turn-orb ${isMyTurn ? "turn-orb-active" : ""}`} /></div>
               {game.status === "finished" ? (
                 <div className="winner-card">
                   <span className="winner-star">✦</span>
@@ -1322,13 +1314,13 @@ export default function Home() {
                   <span className="winner-caption">{isDalmuti ? "claimed the highest seat" : isWatermelon ? "grew the best fruit box" : isRobo ? "survived the table" : isRummikub ? "emptied the rack" : "cracked the code"}</span>
                   {game.you.isHost ? (
                     <div className="finish-actions">
-                      <button className="primary-button full-button" onClick={() => void doAction("restart")} disabled={busy}>RESTART GAME <span>↻</span></button>
-                      <button className="outline-button full-button" onClick={() => void doAction("return-lobby")} disabled={busy}>RETURN TO LOBBY <span>↗</span></button>
+                      <button className="primary-button full-button" onClick={() => void doAction("restart")} disabled={busy}>한 판 더 <span>↻</span></button>
+                      <button className="outline-button full-button" onClick={() => void doAction("return-lobby")} disabled={busy}>로비로 돌아가기 <span>↗</span></button>
                     </div>
                   ) : <p className="finish-waiting">방장이 다음 게임을 선택할 때까지 기다려주세요.</p>}
                 </div>
               ) : game.status === "waiting" ? (
-                <p className="rail-copy">The table is ready when everyone has a seat. Keep this tab open while you share the code.</p>
+                <p className="rail-copy">친구들에게 초대 코드를 보내주세요. 모두 모이면 방장이 게임을 시작할 수 있어요.</p>
               ) : isDalmuti ? (
                 <div className="dalmuti-rail"><p className="rail-copy">같은 장수의 더 낮은 숫자만 이깁니다. 모두가 패스하면 마지막으로 낸 사람이 새 세트를 엽니다.</p><p className="dalmuti-rail-note">광대는 혼자 내면 13, 다른 계급과 함께 내면 그 계급으로 변합니다.</p></div>
               ) : isWatermelon ? (
@@ -1370,7 +1362,7 @@ export default function Home() {
                   playerName={setupPlayer?.name ?? "상대"}
                 />
               ) : !isMyTurn ? (
-                <p className="rail-copy">You can watch the revealed tiles and update your theory while the active player makes a move.</p>
+                <p className="rail-copy">상대의 차례예요. 공개된 타일을 살펴보며 다음 수를 생각해보세요.</p>
               ) : game.penaltyPending ? (
                 <p className="rail-copy penalty-copy">The deck is empty and your guess missed. Select one unrevealed tile in <em>your code</em> to expose it.</p>
               ) : !game.turnDrawn ? (
@@ -1479,37 +1471,30 @@ export default function Home() {
     <main className="app-shell home-shell">
       <header className="topbar">
           <div className="wordmark"><span className="wordmark-mark">TH</span><span>TABLEHOUSE</span></div>
-          <div className="topbar-meta"><span className="live-dot" /> MULTIPLAYER GAMES <span className="topbar-slash">/</span> DA VINCI · ROBO 77 · RUMMIKUB · WATERMELON · DALMUTI</div>
+          <a className="club-lobby-link" href="#public-lobby-title">열린 방 둘러보기 ↗</a>
       </header>
 
-      <div className="hero-grid">
-        <section className="hero-copy">
-          <span className="eyebrow hero-eyebrow">A MODERN DEDUCTION TABLE</span>
-          <h1>Read the room.<br /><em>Crack the code.</em></h1>
-          <p className="hero-lede">A shared table for sharp minds, hidden numbers, and the one card you should never play.</p>
-          <div className="hero-details"><span>01</span><p>Hide your sequence.<br />Study every reveal.</p><span className="hero-line" /></div>
-        </section>
+      <section className="club-intro">
+        <div><p className="club-kicker">친구들과 모이는 온라인 보드게임방</p><h1>자리 있어.<br />한 판 하고 가.</h1></div>
+        <div className="club-note"><span>오늘의 테이블</span><p>숫자를 읽고, 눈치를 보고,<br />가끔은 운에 맡기고.</p><small>게임을 고르고 친구를 초대하세요.</small></div>
+      </section>
 
-        <section className="hero-art" aria-label="A stack of game tiles">
-          <div className="orbit orbit-one" /><div className="orbit orbit-two" />
-          <div className="art-caption art-caption-top">THE TABLE IS<br /><strong>ALWAYS WATCHING</strong></div>
-          <div className="art-tile art-tile-back"><span>?</span></div>
-          <div className="art-tile art-tile-mid"><small>BLACK</small><strong>7</strong><i /></div>
-          <div className="art-tile art-tile-front"><small>WHITE</small><strong>4</strong><i /></div>
-          <div className="art-caption art-caption-bottom"><span>NO LUCK.</span><strong>JUST LOGIC.</strong></div>
-          <span className="art-plus plus-a">+</span><span className="art-plus plus-b">+</span>
-        </section>
-      </div>
-
-      <section className="game-selector" aria-label="게임 선택">
-        <div>
-          <span className="eyebrow">CHOOSE YOUR TABLE</span>
-          <p>{gameDescription(selectedGame)}</p>
-        </div>
+      <div className="home-desk">
+      <section className="game-selector" aria-labelledby="game-menu-title">
+        <div className="menu-heading"><h2 id="game-menu-title">뭐 하고 놀까?</h2><span>다섯 가지 게임</span></div>
         <div className="game-selector-buttons">
-          {(["davinci", "robo77", "rummikub", "watermelon", "dalmuti"] as GameType[]).map((gameType) => (
-            <button key={gameType} type="button" className={selectedGame === gameType ? "game-selector-active" : ""} onClick={() => setSelectedGame(gameType)}>
-              <span>{gameType === "dalmuti" ? "D" : gameType === "robo77" ? "77" : gameType === "rummikub" ? "R" : gameType === "watermelon" ? "WM" : "DC"}</span><strong>{gameName(gameType)}</strong><small>{gameType === "watermelon" ? "SOLO · 2—4 MULTI" : gameType === "robo77" || gameType === "dalmuti" ? "4—8 PLAYERS" : "2—4 PLAYERS"}</small>
+          {([
+            { id: "davinci", title: "다빈치코드", genre: "추리", players: "2–4명", description: "상대가 숨긴 숫자. 단서는 이미 테이블 위에.", mark: "01" },
+            { id: "robo77", title: "로보77", genre: "숫자 · 눈치", players: "2–8명", description: "더하고, 뒤집고, 떠넘기고. 77은 피하세요.", mark: "02" },
+            { id: "rummikub", title: "루미큐브", genre: "조합 · 전략", players: "2–4명", description: "흩어진 숫자를 연결하는 나만의 한 수.", mark: "03" },
+            { id: "watermelon", title: "수박게임", genre: "합성 · 기록", players: "혼자 / 2–4명", description: "체리 하나부터 수박까지. 이번엔 어디까지?", mark: "04" },
+            { id: "dalmuti", title: "달무티", genre: "카드 · 계급", players: "4–8명", description: "이번 판의 농노가 다음 판의 달무티.", mark: "05" },
+          ] as const).map((item) => (
+            <button key={item.id} type="button" aria-pressed={selectedGame === item.id} className={selectedGame === item.id ? "game-selector-active" : ""} onClick={() => setSelectedGame(item.id)}>
+              <span className="menu-number">{item.mark}</span>
+              <span className="menu-game-copy"><strong>{item.title}</strong><small>{item.description}</small></span>
+              <span className="menu-game-meta"><small>{item.genre}</small><b>{item.players}</b></span>
+              <span className="menu-selected" aria-hidden="true">{selectedGame === item.id ? "✓" : "↗"}</span>
             </button>
           ))}
         </div>
@@ -1517,28 +1502,30 @@ export default function Home() {
 
       <section className="entry-grid">
         <form className="entry-card create-card" onSubmit={createRoom}>
-          <div className="entry-card-top"><span className="entry-index">01</span><span className="entry-status">NEW TABLE</span></div>
-          <h2>Deal a new<br /><em>{selectedGame === "davinci" ? "hand." : "round."}</em></h2>
-          <label>YOUR NAME<input value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Ada" maxLength={18} /></label>
-          <button className="primary-button full-button" disabled={busy || !name.trim()}>CREATE {gameName(selectedGame)} <span>→</span></button>
-          {selectedGame === "watermelon" ? <button type="button" className="outline-button full-button watermelon-solo-button" onClick={() => setScreen("watermelon-solo")}>PLAY SOLO NOW <span>●</span></button> : null}
+          <div className="entry-card-top"><span className="entry-index">새 테이블</span><span className="entry-status">친구 초대</span></div>
+          <h2>{selectedGame === "davinci" ? "다빈치코드" : selectedGame === "robo77" ? "로보77" : selectedGame === "rummikub" ? "루미큐브" : selectedGame === "watermelon" ? "수박게임" : "달무티"}<small>같이 할 사람, 여기로.</small></h2>
+          <label>닉네임<input value={name} onChange={(event) => setName(event.target.value)} placeholder="친구들이 알아볼 이름" maxLength={18} /></label>
+          <button className="primary-button full-button" disabled={busy || !name.trim()}>방 만들고 초대하기 <span>→</span></button>
+          {selectedGame === "watermelon" ? <button type="button" className="outline-button full-button watermelon-solo-button" onClick={() => setScreen("watermelon-solo")}>혼자 바로 시작 <span>●</span></button> : null}
         </form>
         <form className="entry-card join-card" onSubmit={joinRoom}>
-          <div className="entry-card-top"><span className="entry-index">02</span><span className="entry-status">JOIN A TABLE</span></div>
-          <h2>Step into<br /><em>the room.</em></h2>
-          <label>YOUR NAME<input value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Grace" maxLength={18} /></label>
-          <label>ROOM CODE<input className="code-input" value={roomCode} onChange={(event) => setRoomCode(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5))} placeholder="ABCDE" maxLength={5} /></label>
-          <button className="outline-button full-button" disabled={busy || !name.trim() || roomCode.length !== 5}>JOIN ROOM <span>→</span></button>
+          <div className="entry-card-top"><span className="entry-index">초대받았나요?</span></div>
+          <h2>친구 방에 합류하기</h2>
+          <label>닉네임<input value={name} onChange={(event) => setName(event.target.value)} placeholder="게임에서 사용할 이름" maxLength={18} /></label>
+          <label>초대 코드<input className="code-input" value={roomCode} onChange={(event) => setRoomCode(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5))} placeholder="ABCDE" maxLength={5} /></label>
+          <button className="outline-button full-button" disabled={busy || !name.trim() || roomCode.length !== 5}>입장하기 <span>→</span></button>
         </form>
       </section>
+
+      </div>
 
       <section className="public-lobby" aria-labelledby="public-lobby-title">
         <div className="public-lobby-head">
           <div>
-            <span className="eyebrow">PUBLIC LOBBY</span>
-            <h2 id="public-lobby-title">코드 없이 바로 참가</h2>
+            <span className="eyebrow">같이 할 사람을 찾고 있어요</span>
+            <h2 id="public-lobby-title">지금 열린 테이블</h2>
           </div>
-          <button type="button" onClick={() => void loadPublicRooms()} disabled={lobbyLoading}>REFRESH ↻</button>
+          <button type="button" onClick={() => void loadPublicRooms()} disabled={lobbyLoading}>새로고침 ↻</button>
         </div>
         <p className="public-lobby-note">닉네임을 입력한 뒤 대기 중인 방을 선택하세요.</p>
         <div className="public-room-list" aria-live="polite">
@@ -1560,7 +1547,7 @@ export default function Home() {
                     void joinRoomByCode(room.code);
                   }}
                   disabled={busy || !name.trim()}
-                >JOIN →</button>
+                >합류하기 →</button>
               </div>
             </article>
           )) : (
@@ -1587,7 +1574,7 @@ export default function Home() {
         </button>
       ) : null}
 
-      <footer className="home-footer"><span>BUILT FOR THE SUSPICIOUS</span><span>© 2026 · KEEP YOUR CODE CLOSE</span><span className="footer-symbol">✦</span></footer>
+      <footer className="home-footer"><span>TABLEHOUSE</span><span>다음 판에도, 같은 자리에서.</span><span>© 2026</span></footer>
       {error ? <div className="toast error-toast" role="alert">{error}<button onClick={() => setError("")}>×</button></div> : null}
     </main>
   );

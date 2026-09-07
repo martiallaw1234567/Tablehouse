@@ -31,5 +31,7 @@ test("renders development preview metadata", async () => {
   );
   const html = await response.text();
   assert.match(html, developmentPreviewMeta);
-  assert.match(html, /WATERMELON MERGE/);
+  assert.match(html, /뭐 하고 놀까/);
+  assert.match(html, /방 만들고 초대하기/);
+  assert.match(html, /aria-pressed="true"/);
 });
